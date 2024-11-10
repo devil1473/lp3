@@ -1,0 +1,63 @@
+ML PR : 06 (sales_data_sample Dataset)
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+
+
+data = pd.read_csv('sales_data_sample.csv', encoding='ISO-8859-1')
+print(data.head())
+
+
+features = data[['SALES', 'QUANTITYORDERED']]
+scaler = StandardScaler()
+scaled_features = scaler.fit_transform(features)
+
+
+inertia = []
+K = range(1, 11)
+
+
+for k in K:
+    kmeans = KMeans(n_clusters=k, random_state=42)
+    kmeans.fit(scaled_features)
+    inertia.append(kmeans.inertia_)
+
+
+plt.figure(figsize=(8, 6))
+plt.plot(K, inertia, 'bo-', markersize=8)
+plt.title('Elbow Method For Optimal Number of Clusters')
+plt.xlabel('Number of clusters (K)')
+plt.ylabel('Inertia')
+plt.show()
+
+
+optimal_k = 3  
+kmeans = KMeans(n_clusters=optimal_k, random_state=42)
+data['Cluster'] = kmeans.fit_predict(scaled_features)
+print(data[['SALES', 'QUANTITYORDERED', 'Cluster']].head())
+
+
+plt.figure(figsize=(10, 8))
+plt.scatter(data['SALES'], data['QUANTITYORDERED'], c=data['Cluster'], cmap='viridis')
+plt.title('K-Means Clustering of Sales Data')
+plt.xlabel('SALES')
+plt.ylabel('QUANTITYORDERED')
+plt.show()
+
+
+from sklearn.cluster import AgglomerativeClustering
+hier_clust = AgglomerativeClustering(n_clusters=optimal_k)
+data['Hier_Cluster'] = hier_clust.fit_predict(scaled_features)
+
+
+plt.figure(figsize=(10, 8))
+plt.scatter(data['SALES'], data['QUANTITYORDERED'], c=data['Hier_Cluster'], cmap='rainbow')
+plt.title('Hierarchical Clustering of Sales Data')
+plt.xlabel('SALES')
+plt.ylabel('QUANTITYORDERED')
+plt.show()
+
+
+
+
