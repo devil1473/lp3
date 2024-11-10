@@ -1,5 +1,5 @@
 class Job:
-    def _init_(self, job_id, deadline, profit):
+    def __init__(self, job_id, deadline, profit):
         self.job_id = job_id
         self.deadline = deadline
         self.profit = profit
@@ -37,5 +37,5 @@ def main():
     print(f"Job sequence: {job_sequence}")
     print(f"Total profit: {total_profit}")
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     main()
